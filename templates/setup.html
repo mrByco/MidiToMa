@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Midi to MA Lighting console</title>
+</head>
+<body>
+
+<h2>Select apc 40 interface</h2>
+<h6>In</h6>
+<ol>
+{%for port in model.available_in_ports%}
+    {% if port not in model.usedPorts %}
+    <li><a href="/select?in_apc_port={{ port }}">{{port }}</a></li>
+    {% elif port == model.selected_apc_in %}
+    <li><a style="font-weight: bold" href="/select?in_apc_port=">{{port }} (Selected)</a></li>
+    {% endif %}
+{%endfor%}
+</ol>
+
+<h6>Out</h6>
+<ol>
+{%for port in model.available_out_ports%}
+    {% if port not in model.usedPorts %}
+    <li><a href="/select?out_apc_port={{ port }}">{{port }}</a></li>
+    {% elif port == model.selected_apc_out %}
+    <li><a style="font-weight: bold" href="/select?out_apc_port=">{{port }} (Selected)</a></li>
+    {% endif %}
+{%endfor%}
+</ol>
+
+<h2>Select MA interface</h2>
+<h6>In</h6>
+<ol>
+{%for port in model.available_in_ports%}
+    {% if port not in model.usedPorts %}
+    <li><a href="/select?in_ma_port={{ port }}">{{port }}</a></li>
+    {% elif port == model.selected_ma_in %}
+    <li><a style="font-weight: bold" href="/select?in_ma_port=">{{port }} (Selected)</a></li>
+    {% endif %}
+{%endfor%}
+</ol>
+
+<h6>Out</h6>
+<ol>
+{%for port in model.available_out_ports%}
+    {% if port not in model.usedPorts %}
+    <li><a href="/select?out_ma_port={{ port }}">{{port }}</a></li>
+    {% elif port == model.selected_ma_out %}
+    <li><a style="font-weight: bold" href="/select?out_ma_port=">{{port }} (Selected)</a></li>
+    {% endif %}
+{%endfor%}
+</ol>
+
+</body>
+</html>
