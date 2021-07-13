@@ -38,4 +38,5 @@ def getSetupPage():
 
 
 if __name__ == '__main__':
+    print("Starting on localhost:5000...")
     app.run()

@@ -56,3 +56,7 @@ def setup_5x9_buttons(midi: MidiController):
         Translator((ValueGoTrough(), FixValueFilter(86, 86), FixValueFilter(127, 127))),
     ]
     midi.apc_ma_translators.extend(translators)
+
+
+def setup_feedback(midi: MidiController):
+    midi.tran
