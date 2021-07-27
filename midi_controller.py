@@ -1,8 +1,10 @@
+import math
 import threading
 import time
 from typing import Dict
 
 import rtmidi
+import serial
 from flask import json
 from rtmidi import MidiIn, MidiOut
 
@@ -19,8 +21,10 @@ APC_INIT_CODE = [0xf0, 0x7e, 0x00, 0x06, 0x01, 0xf7, 0xf0, 0x47, 0x00, 0x73, 0x6
                  0x00,
                  0xB0, 0x3C, 0x00, 0xB0, 0x3D, 0x00, 0xB0, 0x3E, 0x00, 0xB0, 0x3F, 0x00]
 
+button_serial = serial.Serial("COM4", 57600)
 
-class MidiController():
+
+class MidiController:
     apc_out = rtmidi.MidiOut()
     apc_in = rtmidi.MidiIn()
     ma_in = rtmidi.MidiIn()
@@ -39,18 +43,36 @@ class MidiController():
 
     def __init__(self):
         self.refresh_available_ports()
-        self.loadState()
+        self.load_state()
 
     def translate_loop_task(self):
+        button_serial.flushInput()
         while True:
+            t1 = time.time()
             message = self.apc_in.get_message()
-            if (message):
+            if message:
                 self.on_apc_message(message[0])
                 print(f'apc{message[0]}')
             message = self.ma_in.get_message()
-            if (message):
+            if message:
                 self.apc_out.send_message(message[0])
                 print(f'ma{message[0]}')
+
+            if button_serial.in_waiting:
+                print(button_serial.in_waiting)
+                inp = button_serial.readline()
+                msg = inp.decode()
+
+                print(msg)
+                num_str = ""
+                for char in msg:
+                    try:
+                        int(char)
+                        num_str += char
+                    except:
+                        if num_str != "":
+                            self.on_x_keys_message(int(num_str), True if char is "t" else False)
+                            num_str = ""
 
     def start_loop(self):
         b = threading.Thread(name='background', target=self.translate_loop_task)
@@ -104,7 +126,17 @@ class MidiController():
                 print(f'apc{message} > ma{result}')
                 self.ma_out.send_message(result)
 
-    def loadState(self):
+    def on_x_keys_message(self, key_number: int, state: bool):
+        if key_number == 1:
+            return
+        if state:
+            message = [0x90 + ((key_number % 5) - 1), 121 + math.floor(key_number / 5), 127 if state else 0]
+        else:
+            message = [0x80 + ((key_number % 5) - 1), 121 + math.floor(key_number / 5), 127 if state else 0]
+        print(message)
+        self.ma_out.send_message(message)
+
+    def load_state(self):
         try:
             file = open('state.json', 'r')
             stateString = file.readline()

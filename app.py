@@ -1,3 +1,8 @@
+import threading
+import time
+from time import sleep
+
+import serial
 from flask import Flask, render_template, request, redirect
 from mappings.setup_mappings import setup as setup_midi
 import rtmidi
@@ -9,6 +14,8 @@ app = Flask(__name__)
 midi = MidiController()
 midi.start_loop()
 setup_midi(midi)
+
+
 
 
 @app.route('/')
