@@ -33,6 +33,7 @@ class ProgrammerEncoderTranslator(Translator):
     negative_dest_address: (int, int)
     positive_dest_address: (int, int)
     address: (int, int)
+    repeat_message = 0
 
     def __init__(self, address: (int, int), destAddressPos: (int, int), destAddressNeg: (int, int)):
         self.address = address
@@ -41,6 +42,8 @@ class ProgrammerEncoderTranslator(Translator):
         super().__init__([])
 
     def translate(self, values: [int]) -> [int]:
+        self.repeat_message = abs(values[2] - 63)
+        print(self.repeat_message)
         if values[2] > 63:
             return (self.positive_dest_address[0], self.positive_dest_address[1], 60)
         else:

@@ -9,7 +9,7 @@ from flask import json
 from rtmidi import MidiIn, MidiOut
 
 from model.setup import Setup
-from translator import Translator
+from translator import Translator, ProgrammerEncoderTranslator
 import asyncio
 
 VIRTUAL_PORT_NAME = "MA Connector [plug it ;)] "
@@ -128,10 +128,14 @@ class MidiController:
             if translator.translatable(message):
                 result = translator.translate(message)
                 print(f'apc{message} > ma{result}')
-                self.ma_out.send_message(result)
+                if type(translator) is ProgrammerEncoderTranslator:
+                    for i in range(translator.repeat_message):
+                        print('repeat')
+                        self.ma_out.send_message(result)
+                else:
+                    self.ma_out.send_message(result)
                 feedback = translator.get_instant_feedback(message)
                 if feedback != None:
-                    print("feedback")
                     self.apc_out.send_message(feedback)
 
     def on_x_keys_message(self, key_number: int, state: bool):

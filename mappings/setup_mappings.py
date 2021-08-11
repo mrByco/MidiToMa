@@ -43,13 +43,13 @@ def setup_side_enc_faders(midi: MidiController):
 def setup_programmer_encoders(midi: MidiController):
     translators: [Translator] = [
         ProgrammerEncoderTranslator((176, 48), (145, 8), (146, 8)),
-        ProgrammerEncoderTranslator((176, 49), (131, 2), (132, 2)),
-        ProgrammerEncoderTranslator((176, 50), (131, 3), (132, 3)),
-        ProgrammerEncoderTranslator((176, 51), (131, 4), (132, 4)),
-        ProgrammerEncoderTranslator((176, 52), (131, 5), (132, 5)),
-        ProgrammerEncoderTranslator((176, 53), (131, 6), (132, 6)),
-        ProgrammerEncoderTranslator((176, 54), (131, 7), (132, 7)),
-        ProgrammerEncoderTranslator((176, 55), (131, 8), (132, 8)),
+        ProgrammerEncoderTranslator((176, 49), (145, 9), (146, 9)),
+        ProgrammerEncoderTranslator((176, 50), (145, 10), (146, 10)),
+        ProgrammerEncoderTranslator((176, 51), (145, 11), (146, 11)),
+        ProgrammerEncoderTranslator((176, 52), (145, 12), (146, 12)),
+        ProgrammerEncoderTranslator((176, 53), (145, 13), (146, 13)),
+        ProgrammerEncoderTranslator((176, 54), (145, 14), (146, 14)),
+        ProgrammerEncoderTranslator((176, 55), (145, 15), (146, 15)),
     ]
     midi.apc_ma_translators.extend(translators)
 
