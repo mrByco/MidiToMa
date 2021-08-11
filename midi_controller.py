@@ -21,7 +21,10 @@ APC_INIT_CODE = [0xf0, 0x7e, 0x00, 0x06, 0x01, 0xf7, 0xf0, 0x47, 0x00, 0x73, 0x6
                  0x00,
                  0xB0, 0x3C, 0x00, 0xB0, 0x3D, 0x00, 0xB0, 0x3E, 0x00, 0xB0, 0x3F, 0x00]
 
-button_serial = serial.Serial("COM7", 57600)
+try:
+    button_serial = serial.Serial("COM7", 57600)
+except:
+    button_serial = None
 
 
 class MidiController:
@@ -46,7 +49,8 @@ class MidiController:
         self.load_state()
 
     def translate_loop_task(self):
-        button_serial.flushInput()
+        if button_serial is not None:
+            button_serial.flushInput()
         while True:
             t1 = time.time()
             message = self.apc_in.get_message()
@@ -58,7 +62,7 @@ class MidiController:
                 self.apc_out.send_message(message[0])
                 print(f'ma{message[0]}')
 
-            if button_serial.in_waiting:
+            if button_serial is not None and button_serial.in_waiting:
                 print(button_serial.in_waiting)
                 inp = button_serial.readline()
                 msg = inp.decode()
@@ -71,7 +75,7 @@ class MidiController:
                         num_str += char
                     except:
                         if num_str != "":
-                            self.on_x_keys_message(int(num_str), True if char is "t" else False)
+                            self.on_x_keys_message(int(num_str), True if char == "t" else False)
                             num_str = ""
 
     def start_loop(self):
@@ -125,6 +129,10 @@ class MidiController:
                 result = translator.translate(message)
                 print(f'apc{message} > ma{result}')
                 self.ma_out.send_message(result)
+                feedback = translator.get_instant_feedback(message)
+                if feedback != None:
+                    print("feedback")
+                    self.apc_out.send_message(feedback)
 
     def on_x_keys_message(self, key_number: int, state: bool):
         if key_number == 1:
